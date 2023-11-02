@@ -20,7 +20,8 @@ class Button
     public:
     Button();
     ~Button();
-    Button(int x, int y, int widht, int height);
+    Button(std::string name, int widht, int height);
+    std::string button_name;
 
     bool button_load_media(std::string path);
     void button_render(int x, int y, SDL_Rect* clip = NULL);

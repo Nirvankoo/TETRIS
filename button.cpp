@@ -21,13 +21,11 @@ Button::Button()
     button_current_sprite = BUTTON_SPRITE_MOUSE_OUT;
 }
 
-Button::Button(int x, int y, int widht, int height)
+Button::Button(std::string name, int widht, int height) : button_name(name), width(widht), height(height)
 {
     button_texture = NULL;
-    width = widht;
-    height = height;
-    button_position.x = x;
-    button_position.y = y;
+    button_position.x = 0;
+    button_position.y = 0;
     button_current_sprite = BUTTON_SPRITE_MOUSE_OUT;
 }
 
@@ -58,11 +56,6 @@ bool Button::button_load_media(std::string path)
         {
             std::cout<<"Unable to create texture from "<<path.c_str()<<"! SDL Error: "<<SDL_GetError()<<std::endl;
             success = false;
-        }
-        else
-        {
-            width = loaded_surface->w;
-            height = loaded_surface->h;
         }
         SDL_FreeSurface(loaded_surface);
     }
@@ -117,7 +110,7 @@ void Button::button_handle_event(SDL_Event *e)
         {
             inside = false;
         }
-        else if (x > button_position.x + BUTTON_WIDTH)
+        else if (x > button_position.x + width)
         {
             inside = false;
         }
@@ -125,7 +118,7 @@ void Button::button_handle_event(SDL_Event *e)
         {
             inside = false;
         }
-        else if (y > button_position.y + BUTTON_HEIGHT)
+        else if (y > button_position.y + height)
         {
             inside = false;
         }
@@ -140,7 +133,7 @@ void Button::button_handle_event(SDL_Event *e)
             
             case SDL_MOUSEMOTION:
                 button_current_sprite = BUTTON_SPRITE_MOUSE_OVER_MOTION;
-                std::cout<<"<MOUSE OVER BUTTON>"<<std::endl;
+                std::cout << "<MOUSE OVER " << button_name << ">" << "x:" << x << "y:" << y << std::endl;
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 button_current_sprite = BUTTON_SPRITE_MOUSE_DOWN;
@@ -154,10 +147,10 @@ void Button::button_handle_event(SDL_Event *e)
 
 //buttons objects!!!!!!!!!!!!!!!!!!!
 
-Button button_start;
+Button button_start("start", 265, 100);
 SDL_Rect button_sprite_clips[BUTTON_SPRITE_TOTAL];
-Button button_music_switch;
-Button button_sounds_switch;
+Button button_music_switch("MUSIC", 100, 30);
+Button button_sound_switch("SOUND", 100, 30);
 
 
 bool init_button()
@@ -191,14 +184,15 @@ bool init_button_media()
     {
         button_sprite_clips[i].x = 0;
         button_sprite_clips[i].y = i * 100;
-        button_sprite_clips[i].w = BUTTON_WIDTH;
-        button_sprite_clips[i].h = BUTTON_HEIGHT;
+        button_sprite_clips[i].w = button_start.button_get_width();
+        button_sprite_clips[i].h = button_start.button_get_height();
     }
     
 
     button_start.button_set_position(355, 345);
     button_music_switch.button_set_position(10, 10);
-    button_sounds_switch.button_set_position(10, 50);
+    button_sound_switch.button_set_position(10, 50);
+   
 
     return succes;
 }
@@ -241,6 +235,8 @@ void start()
             }
             button_start.button_handle_event(&e);
             button_music_switch.button_handle_event(&e);
+            button_sound_switch.button_handle_event(&e);
+           
            
     
         }
@@ -252,7 +248,8 @@ void start()
         
         //button settings !!!!!!!!!!!!!!!!!!!!
         create_button_set("Music : ON", 10, 10, {0xFF, 0xFF, 0xFF});
-        create_button_set("Sounds : ON", 10, 50, {0xFF, 0xFF, 0xFF});
+        create_button_set("Sound : ON", 10, 50, {0xFF, 0xFF, 0xFF});
+       
         SDL_RenderPresent(renderer);
         
     } 
