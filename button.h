@@ -22,7 +22,6 @@ class Button
     ~Button();
     Button(std::string name, int widht, int height);
     std::string button_name;
-
     bool button_load_media(std::string path);
     void button_render(int x, int y, SDL_Rect* clip = NULL);
     int button_get_width();
@@ -32,6 +31,8 @@ class Button
     int button_get_position_y();
     void button_handle_event(SDL_Event* e);
     Button_current_sprite button_current_sprite;
+    void button_set_name(std::string name);
+    
    
 
     private:
