@@ -25,9 +25,9 @@ bool intit_button_ttf_font()
     return success;
 }
 
-void create_button_set(Button ob, int x, int y, SDL_Color color)
+void create_button_set(Button ob, int x, int y)
 {
-    SDL_Surface *button_set_surface = TTF_RenderText_Solid(but_set_font, ob.button_name.c_str(), color);
+    SDL_Surface *button_set_surface = TTF_RenderText_Solid(but_set_font, ob.button_name.c_str(), ob.button_color);
     SDL_Texture *button_set_texture = SDL_CreateTextureFromSurface(renderer, button_set_surface);
     SDL_Rect button_set_rect = {x, y, button_set_surface->w, button_set_surface->h};
 

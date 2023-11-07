@@ -8,10 +8,7 @@
 
 bool intit_button_ttf_font();
 
-void create_button_set(Button ob, int x, int y, SDL_Color color);
-
-
-
+void create_button_set(Button ob, int x, int y);
 
 
 #endif

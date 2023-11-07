@@ -3,6 +3,7 @@
 #include"window.h"
 #include"game.h"
 #include"button.h"
+#include"shapes.h"
 int main(int argc, char* argv[])
 {
 
@@ -15,7 +16,21 @@ int main(int argc, char* argv[])
 
 
 
+
     start();
+
+    int squareShape[4][4] = {
+    {1, 1, 0, 0},
+    {1, 1, 0, 0},
+    {0, 0, 0, 0},
+    {0, 0, 0, 0}
+};
+
+Shape square("square", {0, 0, 0}, squareShape, 300, 0);
+
+
+
+    create_shapes(square);
 
 
     

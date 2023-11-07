@@ -11,6 +11,9 @@
 const int BUTTON_WIDTH = 265;
 const int BUTTON_HEIGHT = 100;
 
+bool quit_start = false;
+
+
 Button::Button()
 {
     button_texture = NULL;
@@ -23,6 +26,7 @@ Button::Button()
 
 Button::Button(std::string name, int widht, int height) : button_name(name), width(widht), height(height)
 {
+    button_color = {0xFF, 0xFF, 0xFF};
     button_texture = NULL;
     button_position.x = 0;
     button_position.y = 0;
@@ -116,6 +120,7 @@ void Button::button_handle_event(SDL_Event *e)
         if (!inside)
         {
             button_current_sprite = BUTTON_SPRITE_MOUSE_OUT;
+             button_color = {0xFF, 0xFF, 0xFF};
         }
         else
         {
@@ -125,14 +130,22 @@ void Button::button_handle_event(SDL_Event *e)
                 button_current_sprite = BUTTON_SPRITE_MOUSE_OVER_MOTION;
                 std::cout << "<MOUSE OVER " << button_name << ">"
                           << "x:" << x << "y:" << y << std::endl;
+                          button_color = {0xFF, 0xFF, 0x00};
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (button_name == "start")
                 {
                     // Handle action for the START button
                     button_current_sprite = BUTTON_SPRITE_MOUSE_DOWN;
-                    Mix_PlayChannel(-1, button_click, 0);
+                    if(sound_effect)
+                    {
+                        Mix_PlayChannel(-1, button_click, 0);
+                    }
                     destroy_button();
+                    
+                    quit_start = true;
+                    return;
+                    
                 }
                 else if (button_name == "MUSIC : ON" || button_name == "MUSIC : OFF")
                 {
@@ -141,11 +154,13 @@ void Button::button_handle_event(SDL_Event *e)
                         // Handle action for the MUSIC button
                         Mix_PlayChannel(-1, button_click, 0);
                         button_set_name("MUSIC : OFF");
+                        Mix_PauseMusic();
                     }
                     else if (button_name == "MUSIC : OFF")
                     {
                         Mix_PlayChannel(-1, button_click, 0);
                         button_set_name("MUSIC : ON");
+                        Mix_ResumeMusic();
                     }
                 }
                 else if (button_name == "SOUND : ON" || button_name == "SOUND : OFF")
@@ -155,11 +170,14 @@ void Button::button_handle_event(SDL_Event *e)
                         // Handle action for the SOUND button
                         Mix_PlayChannel(-1, button_click, 0);
                         button_set_name("SOUND : OFF");
+                        sound_effect = false;
+
                     }
                     else if (button_name == "SOUND : OFF")
                     {
                         Mix_PlayChannel(-1, button_click, 0);
                         button_set_name("SOUND : ON");
+                        sound_effect = true;
                     }
                 }
                 break;
@@ -242,16 +260,16 @@ void start()
         return;
     }
 
-    bool quit = false;
+    
     SDL_Event e;
 
-    while (!quit)
+    while (!quit_start)
     {
         while (SDL_PollEvent(&e) != 0)
         {
             if (e.type == SDL_QUIT)
             {
-                quit = true;
+                quit_start = true;
             }
             button_start.button_handle_event(&e);
             button_music_switch.button_handle_event(&e);
@@ -264,8 +282,8 @@ void start()
         button_start.button_render(button_start.button_get_position_x(), button_start.button_get_position_y(), &button_sprite_clips[button_start.button_current_sprite]);
 
         // button settings !!!!!!!!!!!!!!!!!!!!
-        create_button_set(button_music_switch, 10, 10, {0xFF, 0xFF, 0xFF});
-        create_button_set(button_sound_switch, 10, 50, {0xFF, 0xFF, 0xFF});
+        create_button_set(button_music_switch, 10, 10); 
+        create_button_set(button_sound_switch, 10, 50);
 
         SDL_RenderPresent(renderer);
     }

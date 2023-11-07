@@ -22,6 +22,9 @@ class Button
     ~Button();
     Button(std::string name, int widht, int height);
     std::string button_name;
+    SDL_Color button_color;
+
+
     bool button_load_media(std::string path);
     void button_render(int x, int y, SDL_Rect* clip = NULL);
     int button_get_width();
