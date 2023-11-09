@@ -6,6 +6,8 @@
 #include"window.h"
 #include"game.h"
 
+extern bool start_button;
+
 enum Button_current_sprite
 {
     BUTTON_SPRITE_MOUSE_OUT = 0,
@@ -14,6 +16,8 @@ enum Button_current_sprite
     BUTTON_SPRITE_MOUSE_UP = 3,
     BUTTON_SPRITE_TOTAL = 4
 };
+
+
 
 class Button
 {
@@ -50,6 +54,10 @@ bool init_button_media();
 void destroy_button();
 void start();
 
+extern Button button_start;
+extern SDL_Rect button_sprite_clips[BUTTON_SPRITE_TOTAL];
+extern Button button_music_switch;
+extern Button button_sound_switch;
 
 
 

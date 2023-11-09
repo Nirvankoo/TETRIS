@@ -34,6 +34,6 @@ extern Mix_Chunk *button_hover;
 extern TTF_Font *but_set_font;
 extern SDL_Color but_set_color;
 
-static bool sound_effect = true;
+extern bool sound_effect;
 
 #endif

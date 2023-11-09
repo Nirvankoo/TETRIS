@@ -7,11 +7,15 @@
 #include "game.h"
 #include "button.h"
 #include "button_set.h"
+#include "shapes.h"
+#include "run.h"
 
 const int BUTTON_WIDTH = 265;
 const int BUTTON_HEIGHT = 100;
 
-bool quit_start = false;
+bool start_button = false;
+
+
 
 
 Button::Button()
@@ -142,8 +146,13 @@ void Button::button_handle_event(SDL_Event *e)
                         Mix_PlayChannel(-1, button_click, 0);
                     }
                     destroy_button();
+                    start_button = true;
+                    //*******************************************************************
+                    //reset position of the square that it appers at the top of the screen
+                    square.set_shape_cord_y(0);
+
                     
-                    quit_start = true;
+                    
                     return;
                     
                 }
@@ -240,51 +249,4 @@ void destroy_button()
     button_start.~Button();
 }
 
-void start()
-{
-    if (!init_button_media())
-    {
-        std::cout << "Failed to initialize!" << std::endl;
-        return;
-    }
 
-    SDL_Texture *existing_texture = SDL_CreateTextureFromSurface(renderer, main_window_surface_jpg);
-    if (existing_texture == NULL)
-    {
-        std::cout << "Failed to create texture from surface!" << std::endl;
-        destroy_button();
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(main_window);
-        IMG_Quit();
-        SDL_Quit();
-        return;
-    }
-
-    
-    SDL_Event e;
-
-    while (!quit_start)
-    {
-        while (SDL_PollEvent(&e) != 0)
-        {
-            if (e.type == SDL_QUIT)
-            {
-                quit_start = true;
-            }
-            button_start.button_handle_event(&e);
-            button_music_switch.button_handle_event(&e);
-            button_sound_switch.button_handle_event(&e);
-        }
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderClear(renderer);
-
-        SDL_RenderCopy(renderer, existing_texture, NULL, NULL);
-        button_start.button_render(button_start.button_get_position_x(), button_start.button_get_position_y(), &button_sprite_clips[button_start.button_current_sprite]);
-
-        // button settings !!!!!!!!!!!!!!!!!!!!
-        create_button_set(button_music_switch, 10, 10); 
-        create_button_set(button_sound_switch, 10, 50);
-
-        SDL_RenderPresent(renderer);
-    }
-}

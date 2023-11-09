@@ -4,10 +4,12 @@
 #include <SDL2/SDL_mixer.h>
 #include "window.h"
 
+bool sound_effect = true;
 SDL_Window *main_window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Surface *main_window_surface = NULL;
 SDL_Surface *main_window_surface_jpg = NULL;
+
 
 Mix_Music *music = NULL;
 Mix_Chunk *button_click = NULL;

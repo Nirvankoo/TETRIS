@@ -1,0 +1,4 @@
+x_grid = 0 ->> SDL_x = 300
+y_grid = 0 -->> SDL_ y = 0
+
+SDL_y = 720 --->> x_grod =  
