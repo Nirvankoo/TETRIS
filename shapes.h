@@ -4,32 +4,35 @@
 #include<string>
 
 
+
+
 //base class of all shapes
 class Shape
 {
-    protected:
+    private:
     SDL_Texture *shape_texture;
     std::string name;
     SDL_Color shape_color;
-    int shape_type[4][4];
     int cord_x;
     int cord_y;
     int shape_width;
     int shape_height;
+    int shape_type[4][4];
 
 
 
     
     public:
     Shape();
-    Shape(std::string name, int shape_type[4][4], int cord_x, int cord_y);
+    Shape(std::string name, int cord_x, int cord_y);
     virtual ~Shape();
 
-    void render_shape(int cord_x, int cord_y, SDL_Rect *clip = NULL);
+    void render_shape(int x, int y, SDL_Rect *clip = NULL);
     bool load_shape_media(std::string path);
     void handle_shape_event(SDL_Event *e);
 
     //setters
+    
     void set_shape_name(std::string name);
     void set_shape_color(SDL_Color shape_color);
     void set_shape_type(int shape_type[4][4]);
@@ -51,66 +54,170 @@ class Shape
     //miscilaneous
 
     bool inside_grid(int offset);
+    static Shape *create_shapes(const std::string &name);
 };
 
-class Square : protected Shape
+class Square : public Shape
+{
+     public:
+     Square() : Shape(){
+     int square_type[4][4] = {
+            {1, 1, 0, 0},
+            {1, 1, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+
+        set_shape_type(square_type);
+        set_shape_name("Square");
+        set_shape_cord_x(460);
+        set_shape_cord_y(0);
+        set_shape_width(40);
+        set_shape_height(40);
+     }
+    
+   
+    
+};
+
+class Line : public Shape
 {
     public:
-    Square() : Shape(){};
-    ~Square(){};
-    Square(std::string name, int shape_type[4][4], int cord_x, int cord_y) : Shape(name, shape_type, cord_x, cord_y){};
+    Line() : Shape(){
+    int square_type[4][4] = {
+            {1,1, 0, 0},
+            {1, 1, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+
+        set_shape_type(square_type);
+        set_shape_name("line");
+        set_shape_cord_x(460);
+        set_shape_cord_y(0);
+        set_shape_width(40);
+        set_shape_height(40);
+     }
+    
 
 };
 
-class Line : protected Shape
+class T : public Shape
 {
     public:
-    Line() : Shape(){};
-    ~Line(){};
-    Line(std::string name, int shape_type[4][4], int cord_x, int cord_y) : Shape(name, shape_type, cord_x, cord_y){};
+    T() : Shape()
+    {
+        int l_shape_type[4][4] = {
+            {1, 1, 1, 0},
+            {0, 1, 0, 0},
+            {0, 1, 0, 0},
+            {0, 0, 0, 0}};
+
+        set_shape_type(l_shape_type);
+        set_shape_name("T");
+        set_shape_cord_x(460);
+        set_shape_cord_y(0);
+        set_shape_width(40);
+        set_shape_height(40);
+    
+    }   
 };
 
-class L_shape : protected Shape
+class L : public Shape
 {
     public:
-    L_shape() : Shape(){};
-    ~L_shape(){};
-    L_shape(std::string name, int shape_type[4][4], int cord_x, int cord_y) : Shape(name, shape_type, cord_x, cord_y){};
+    L() : Shape()
+    {
+        int t_shape_type[4][4] = {
+            {1, 0, 0, 0},
+            {1, 0, 0, 0},
+            {1, 1, 0, 0},
+            {0, 0, 0, 0}};
+
+        set_shape_type(t_shape_type);
+        set_shape_name("L");
+        set_shape_cord_x(460);
+        set_shape_cord_y(0);
+        set_shape_width(40);
+        set_shape_height(40);
+    };
+   
 };
 
-class T_shape : protected Shape
+class Lm : public Shape
 {
     public:
-    T_shape() : Shape(){};
-    ~T_shape(){};
-    T_shape(std::string name, int shape_type[4][4], int cord_x, int cord_y) : Shape(name, shape_type, cord_x, cord_y){};
+    Lm() : Shape()
+    {
+        int z_shape_type[4][4] = {
+            {0, 1, 0, 0},
+            {0, 1, 0, 0},
+            {1, 1, 0, 0},
+            {0, 0, 0, 0}};
+
+        set_shape_type(z_shape_type);
+        set_shape_name("Lm");
+        set_shape_cord_x(460);
+        set_shape_cord_y(0);
+        set_shape_width(40);
+        set_shape_height(40);
+    };
+    ~Lm(){};
+
+    
+
 };
 
-class Z_shape : protected Shape
+class Z : public Shape
 {
     public:
-    Z_shape() : Shape(){};
-    ~Z_shape(){};
-    Z_shape(std::string name, int shape_type[4][4], int cord_x, int cord_y) : Shape(name, shape_type, cord_x, cord_y){};
+    Z() : Shape()
+    {
+        int s_shape_type[4][4] = {
+            {1, 1, 0, 0},
+            {0, 1, 1, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+
+        set_shape_type(s_shape_type);
+        set_shape_name("Z");
+        set_shape_cord_x(460);
+        set_shape_cord_y(0);
+        set_shape_width(40);
+        set_shape_height(40);
+    };
+    
+    ~Z(){};
+   
+
 };
 
-class S_shape : protected Shape
+class Zm : public Shape
 {
     public:
-    S_shape() : Shape(){};
-    ~S_shape(){};
-    S_shape(std::string name, int shape_type[4][4], int cord_x, int cord_y) : Shape(name, shape_type, cord_x, cord_y){};
+    Zm() : Shape()
+    {
+        int j_shape_type[4][4] = {
+            {0, 1, 1, 0},
+            {1, 1, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+
+        set_shape_type(j_shape_type);
+        set_shape_name("Zm");
+        set_shape_cord_x(460);
+        set_shape_cord_y(0);
+        set_shape_width(40);
+        set_shape_height(40);
+    };
+    
+    ~Zm(){};
+    
+
 };
 
-class J_shape : protected Shape
-{
-    public:
-    J_shape() : Shape(){};
-    ~J_shape(){};
-    J_shape(std::string name, int shape_type[4][4], int cord_x, int cord_y) : Shape(name, shape_type, cord_x, cord_y){};
-};
+extern Shape *current_shape;
+extern bool next_shape_flag;
 
-void create_shapes(Shape obj);
+Shape create_shapes(const std::string &name);
 
     
 

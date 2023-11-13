@@ -21,13 +21,14 @@ class Grid
     void set_grid(int x, int y);
     bool get_grid(int x, int y);
     bool inside_grid(int offset);
+    void show_grid();
     
     private:
-    int grid[10][20];
+    bool grid[10][20];
 
 };
 
- void init_grid();
+void init_grid();
 extern Grid grid_obj;
 
 

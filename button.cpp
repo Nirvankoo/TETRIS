@@ -147,10 +147,10 @@ void Button::button_handle_event(SDL_Event *e)
                     }
                     destroy_button();
                     start_button = true;
+                    next_shape_flag = true;
                     //*******************************************************************
                     //reset position of the square that it appers at the top of the screen
-                    square.set_shape_cord_y(0);
-
+                    
                     
                     
                     return;

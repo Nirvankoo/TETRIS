@@ -4,6 +4,7 @@
 
 extern int square_shape[4][4];
 extern Shape square;
+extern bool next_shape_flag;
 
 void run();
 
