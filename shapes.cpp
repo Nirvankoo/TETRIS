@@ -8,8 +8,8 @@
 
 int const workspace_x1 = 300;
 int const workspace_y1 = 0;
-int const workspace_x2 = 640;
-int const workspacey_2 = 720;
+int const workspace_x2 = 700;
+int const workspacey_2 = 800;
 
 Shape::Shape()
 {
@@ -18,6 +18,7 @@ Shape::Shape()
     shape_color = {0xFF, 0xFF, 0xFF};
     cord_x = 460;
     cord_y = 0;
+    shape_speed = 1;
 }
 
 Shape::Shape(std::string name, int cord_x, int cord_y) : name(name), cord_x(cord_x), cord_y(cord_y)
@@ -44,7 +45,7 @@ void Shape::render_shape(int x, int y, SDL_Rect *clip)
     {
         for (int j = 0; j < 4; j++)
         {
-            if (shape_type[i][j] == 1)
+            if (shape_type[j][i] == 1)
             {
                 // Calculate the render position based on the offsets
                 int render_x = x + i * x_offset;
@@ -174,6 +175,23 @@ void Shape::render_shape(int x, int y, SDL_Rect *clip)
         this->shape_height = shape_height;
     }
 
+    void Shape::set_shape_x_width(int shape_x_width)
+    {
+        this->shape_x_width = shape_x_width;
+    }
+
+    void Shape::set_shape_y_height(int shape_y_height)
+    {
+        this->shape_y_height = shape_y_height;
+    }
+
+    void Shape::set_shape_speed(int speed)
+    {
+       this->shape_speed = speed;
+    }
+
+    //getters
+
     std::string Shape::get_shape_name()
     {
         return this->name;
@@ -209,13 +227,39 @@ void Shape::render_shape(int x, int y, SDL_Rect *clip)
         return this->shape_height;
     }
 
+    int Shape::get_shape_type_width_x()
+    {
+        return this->shape_x_width;
+    }
+
+    int Shape::get_shape_type_height_y()
+    {
+        return this->shape_y_height;
+    }
+
+    int Shape::get_shape_speed()
+    {
+        return this->shape_speed;
+    }
+
+
     // miscilaneous
 
     bool Shape::inside_grid(int offset)
     {
+        int temp_x;
         bool inside_grid_flag = true;
-        int temp_x = this->get_shape_cord_x() + offset;
-        int temp_y = this->get_shape_cord_y();
+        
+        if(this->get_shape_cord_x() + shape_x_width + offset > workspace_x2)
+            return false;
+
+        temp_x = this->get_shape_cord_x() + offset;
+
+
+        
+        int temp_y = this->get_shape_cord_y() + this->get_shape_type_height_y() + offset;
+        
+       
         // seting gorizontal limits according to edges of the working area
         {
             if (temp_x < workspace_x1 || temp_x > workspace_x2 || temp_y < workspace_y1 || temp_y > workspacey_2)
@@ -224,33 +268,12 @@ void Shape::render_shape(int x, int y, SDL_Rect *clip)
         return inside_grid_flag;
     }
 
-    /*void create_shapes(Shape &obj)
-    {
-        if (!(obj.load_shape_media("img/rect.png")))
-        {
-            std::cout << "Failed to load shape media" << std::endl;
-        }
-        else
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    if (obj.get_shape_type(i, j) == 1)
-                    {
-                        obj.render_shape(obj.get_shape_cord_x() + i * 40, obj.get_shape_cord_y() + j * 40, NULL);
-                    }
-                }
-            }
-            SDL_RenderPresent(renderer);
-        }
-    }
-    */
+    
     Shape *Shape::create_shapes(const std::string &name)
     {
         Shape *new_shape_obj = nullptr;
 
-        if (name == "square")
+        if (name == "Square")
         {
             new_shape_obj = new Square();
             if (!new_shape_obj->load_shape_media("img/rect.png"))
@@ -258,7 +281,7 @@ void Shape::render_shape(int x, int y, SDL_Rect *clip)
                 std::cout << "Failed to load shape media" << std::endl;
             }
         }
-        else if (name == "line")
+        else if (name == "Line")
         {
             new_shape_obj = new Line();
             if (!new_shape_obj->load_shape_media("img/line.png"))

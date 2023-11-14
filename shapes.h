@@ -18,6 +18,9 @@ class Shape
     int shape_width;
     int shape_height;
     int shape_type[4][4];
+    int shape_x_width;
+    int shape_y_height;
+    int shape_speed;
 
 
 
@@ -40,7 +43,9 @@ class Shape
     void set_shape_cord_y(int cord_y);
     void set_shape_width(int shape_width);
     void set_shape_height(int shape_height);
-
+    void set_shape_x_width(int x_width);
+    void set_shape_y_height(int y_height);
+    void set_shape_speed(int speed);
 
     //getters
     std::string get_shape_name();
@@ -50,6 +55,9 @@ class Shape
     int get_shape_cord_y();
     int get_shape_width();
     int get_shape_height();
+    int get_shape_type_width_x();
+    int get_shape_type_height_y();
+    int get_shape_speed();
 
     //miscilaneous
 
@@ -61,18 +69,22 @@ class Square : public Shape
 {
      public:
      Square() : Shape(){
-     int square_type[4][4] = {
+     int shape_type[4][4] = {
             {1, 1, 0, 0},
             {1, 1, 0, 0},
             {0, 0, 0, 0},
             {0, 0, 0, 0}};
+        
+        set_shape_x_width(80);
+        set_shape_y_height(80);
 
-        set_shape_type(square_type);
+        set_shape_type(shape_type);
         set_shape_name("Square");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
         set_shape_width(40);
         set_shape_height(40);
+        set_shape_speed(this->get_shape_speed());
      }
     
    
@@ -83,14 +95,17 @@ class Line : public Shape
 {
     public:
     Line() : Shape(){
-    int square_type[4][4] = {
-            {1,1, 0, 0},
-            {1, 1, 0, 0},
+    int shape_type[4][4] = {
+            {1, 1, 1, 1},
+            {0, 0, 0, 0},
             {0, 0, 0, 0},
             {0, 0, 0, 0}};
 
-        set_shape_type(square_type);
-        set_shape_name("line");
+        set_shape_x_width(160);
+        set_shape_y_height(40);
+
+        set_shape_type(shape_type);
+        set_shape_name("Line");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
         set_shape_width(40);
@@ -105,13 +120,17 @@ class T : public Shape
     public:
     T() : Shape()
     {
-        int l_shape_type[4][4] = {
+        int shape_type[4][4] = {
             {1, 1, 1, 0},
             {0, 1, 0, 0},
-            {0, 1, 0, 0},
+            {0, 0, 0, 0},
             {0, 0, 0, 0}};
 
-        set_shape_type(l_shape_type);
+            set_shape_x_width(120);
+            set_shape_y_height(80);
+
+
+        set_shape_type(shape_type);
         set_shape_name("T");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -126,13 +145,16 @@ class L : public Shape
     public:
     L() : Shape()
     {
-        int t_shape_type[4][4] = {
+        int shape_type[4][4] = {
             {1, 0, 0, 0},
             {1, 0, 0, 0},
             {1, 1, 0, 0},
             {0, 0, 0, 0}};
 
-        set_shape_type(t_shape_type);
+            set_shape_x_width(80);
+            set_shape_y_height(120);
+
+        set_shape_type(shape_type);
         set_shape_name("L");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -147,13 +169,16 @@ class Lm : public Shape
     public:
     Lm() : Shape()
     {
-        int z_shape_type[4][4] = {
+        int shape_type[4][4] = {
             {0, 1, 0, 0},
             {0, 1, 0, 0},
             {1, 1, 0, 0},
             {0, 0, 0, 0}};
 
-        set_shape_type(z_shape_type);
+            set_shape_x_width(80);
+            set_shape_y_height(120);
+
+        set_shape_type(shape_type);
         set_shape_name("Lm");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -171,13 +196,16 @@ class Z : public Shape
     public:
     Z() : Shape()
     {
-        int s_shape_type[4][4] = {
+        int shape_type[4][4] = {
             {1, 1, 0, 0},
             {0, 1, 1, 0},
             {0, 0, 0, 0},
             {0, 0, 0, 0}};
 
-        set_shape_type(s_shape_type);
+            set_shape_x_width(120);
+            set_shape_y_height(80);
+
+        set_shape_type(shape_type);
         set_shape_name("Z");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -195,13 +223,17 @@ class Zm : public Shape
     public:
     Zm() : Shape()
     {
-        int j_shape_type[4][4] = {
+        int shape_type[4][4] = {
             {0, 1, 1, 0},
             {1, 1, 0, 0},
             {0, 0, 0, 0},
             {0, 0, 0, 0}};
+            
+            set_shape_x_width(120);
+            set_shape_y_height(80);
 
-        set_shape_type(j_shape_type);
+
+        set_shape_type(shape_type);
         set_shape_name("Zm");
         set_shape_cord_x(460);
         set_shape_cord_y(0);

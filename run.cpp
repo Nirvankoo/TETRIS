@@ -18,7 +18,7 @@ Shape *current_shape = nullptr;
 
 // next shapes flags
 bool next_shape_flag = false;
-std::string shape_array[7] = {"square", "line", "T", "L", "Lm", "Z", "Zm"};
+
 
 void run()
 {
@@ -99,7 +99,7 @@ void run()
             {
                 if (current_shape->inside_grid(0))
                 {
-                    current_shape->set_shape_cord_y(current_shape->get_shape_cord_y() + 1);
+                    current_shape->set_shape_cord_y(current_shape->get_shape_cord_y() + current_shape->get_shape_speed());
                     last_time = current_time;
                 }
                 else
