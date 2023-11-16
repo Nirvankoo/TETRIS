@@ -18,6 +18,7 @@ class Shape
     int shape_width;
     int shape_height;
     int shape_type[4][4];
+    int shape_orientation;
     int shape_x_width;
     int shape_y_height;
     int shape_speed;
@@ -39,6 +40,7 @@ class Shape
     void set_shape_name(std::string name);
     void set_shape_color(SDL_Color shape_color);
     void set_shape_type(int shape_type[4][4]);
+    void set_shape_orientation(int shape_orientation);
     void set_shape_cord_x(int cord_x);
     void set_shape_cord_y(int cord_y);
     void set_shape_width(int shape_width);
@@ -51,6 +53,7 @@ class Shape
     std::string get_shape_name();
     SDL_Color get_shape_color();
     int get_shape_type(int i, int j);
+    int get_shape_orientation();
     int get_shape_cord_x();
     int get_shape_cord_y();
     int get_shape_width();
@@ -63,6 +66,7 @@ class Shape
 
     bool inside_grid(int offset);
     static Shape *create_shapes(const std::string &name);
+    void rotate_shape();
 };
 
 class Square : public Shape
@@ -96,15 +100,16 @@ class Line : public Shape
     public:
     Line() : Shape(){
     int shape_type[4][4] = {
-            {1, 1, 1, 1},
+            {1, 1, 1, 0},
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {0, 0, 0, 0}};
 
-        set_shape_x_width(160);
+        set_shape_x_width(120);
         set_shape_y_height(40);
 
         set_shape_type(shape_type);
+        set_shape_orientation(0);
         set_shape_name("Line");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -131,6 +136,7 @@ class T : public Shape
 
 
         set_shape_type(shape_type);
+        set_shape_orientation(0);
         set_shape_name("T");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -155,6 +161,7 @@ class L : public Shape
             set_shape_y_height(120);
 
         set_shape_type(shape_type);
+        set_shape_orientation(0);
         set_shape_name("L");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -179,6 +186,7 @@ class Lm : public Shape
             set_shape_y_height(120);
 
         set_shape_type(shape_type);
+        set_shape_orientation(0);
         set_shape_name("Lm");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -206,6 +214,7 @@ class Z : public Shape
             set_shape_y_height(80);
 
         set_shape_type(shape_type);
+        set_shape_orientation(0);
         set_shape_name("Z");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -234,6 +243,7 @@ class Zm : public Shape
 
 
         set_shape_type(shape_type);
+        set_shape_orientation(0);
         set_shape_name("Zm");
         set_shape_cord_x(460);
         set_shape_cord_y(0);
@@ -248,7 +258,7 @@ class Zm : public Shape
 
 extern Shape *current_shape;
 extern bool next_shape_flag;
-
+extern bool space_key_pressed;
 Shape create_shapes(const std::string &name);
 
     

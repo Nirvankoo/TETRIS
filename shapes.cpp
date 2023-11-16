@@ -5,11 +5,14 @@
 #include <string>
 #include "window.h"
 #include "grid.h"
+#define BOOST 30
 
 int const workspace_x1 = 300;
 int const workspace_y1 = 0;
 int const workspace_x2 = 700;
 int const workspacey_2 = 800;
+
+bool space_key_pressed = false;
 
 Shape::Shape()
 {
@@ -63,276 +66,515 @@ void Shape::render_shape(int x, int y, SDL_Rect *clip)
     }
 }
 
-
-    bool Shape::load_shape_media(std::string path)
+bool Shape::load_shape_media(std::string path)
+{
+    bool success = true;
+    SDL_Surface *loaded_surface = IMG_Load(path.c_str());
+    if (loaded_surface == NULL)
     {
-        bool success = true;
-        SDL_Surface *loaded_surface = IMG_Load(path.c_str());
-        if (loaded_surface == NULL)
+        std::cout << "Unable to load image" << path.c_str() << "! SDL_image Error: " << IMG_GetError() << std::endl;
+        success = false;
+    }
+    else
+    {
+        SDL_SetColorKey(loaded_surface, SDL_TRUE, SDL_MapRGB(loaded_surface->format, 0, 0xFF, 0xFF));
+        this->shape_texture = SDL_CreateTextureFromSurface(renderer, loaded_surface);
+        if (this->shape_texture == NULL)
         {
-            std::cout << "Unable to load image" << path.c_str() << "! SDL_image Error: " << IMG_GetError() << std::endl;
+            std::cout << "Unable to create texture from " << path.c_str() << "! SDL Error: " << SDL_GetError() << std::endl;
             success = false;
         }
         else
         {
-            SDL_SetColorKey(loaded_surface, SDL_TRUE, SDL_MapRGB(loaded_surface->format, 0, 0xFF, 0xFF));
-            this->shape_texture = SDL_CreateTextureFromSurface(renderer, loaded_surface);
-            if (this->shape_texture == NULL)
+            this->shape_width = loaded_surface->w;
+            this->shape_height = loaded_surface->h;
+        }
+        SDL_FreeSurface(loaded_surface);
+    }
+    return success;
+}
+
+void Shape::handle_shape_event(SDL_Event *e)
+{
+    // Static variable to retain its value between calls
+
+    if (e->type == SDL_QUIT)
+    {
+        // Handle quit event
+    }
+    else if (e->type == SDL_KEYDOWN)
+    {
+        switch (e->key.keysym.sym)
+        {
+        case SDLK_LEFT:
+        {
+            int temp_x = -40;
+            if (this->inside_grid(temp_x))
             {
-                std::cout << "Unable to create texture from " << path.c_str() << "! SDL Error: " << SDL_GetError() << std::endl;
-                success = false;
+                this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
+                Mix_PlayChannel(-1, button_click, 0);
             }
             else
             {
-                this->shape_width = loaded_surface->w;
-                this->shape_height = loaded_surface->h;
+                std::cout << "Outside grid" << std::endl;
             }
-            SDL_FreeSurface(loaded_surface);
+
+            break;
         }
-        return success;
-    }
-
-    void Shape::handle_shape_event(SDL_Event * e)
-    {
-
-        if (e->type == SDL_QUIT)
+        case SDLK_RIGHT:
         {
-            // Handle quit event
+            int temp_x = 40;
+            if (this->inside_grid(temp_x))
+            {
+                this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
+                Mix_PlayChannel(-1, button_click, 0);
+            }
+            else
+            {
+                std::cout << "Outside grid" << std::endl;
+            }
+            break;
         }
-        else if (e->type == SDL_KEYDOWN)
+        case SDLK_r:
         {
-            switch (e->key.keysym.sym)
-            {
-            case SDLK_LEFT:
-            {
-                int temp_x = -40;
-                if (this->inside_grid(temp_x))
-                {
-                    this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
-                }
-                else
-                {
-                    std::cout << "Outside grid" << std::endl;
-                }
-
-                break;
-            }
-            case SDLK_RIGHT:
-            {
-                int temp_x = 40;
-                if (this->inside_grid(temp_x))
-                {
-                    this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
-                }
-                else
-                {
-                    std::cout << "Outside grid" << std::endl;
-                }
-                break;
-            }
-            }
+            this->rotate_shape();
+            Mix_PlayChannel(-1, button_click, 0);
+            break;
         }
-    }
-
-    void Shape::set_shape_name(std::string name)
-    {
-        this->name = name;
-    }
-
-    void Shape::set_shape_color(SDL_Color shape_color)
-    {
-        this->shape_color = shape_color;
-    }
-
-    void Shape::set_shape_type(int shape_type[4][4])
-    {
-        for (int i = 0; i < 4; i++)
+        case SDLK_SPACE:
         {
-            for (int j = 0; j < 4; j++)
-            {
-                this->shape_type[i][j] = shape_type[i][j];
-            }
+           
+            this->set_shape_speed(BOOST);
+            Mix_PlayChannel(-1, button_click, 0);
+          
+            break;
+        }
+        default:
+            break;
+        }
+      
+    }
+}
+
+void Shape::set_shape_name(std::string name)
+{
+    this->name = name;
+}
+
+void Shape::set_shape_color(SDL_Color shape_color)
+{
+    this->shape_color = shape_color;
+}
+
+void Shape::set_shape_type(int shape_type[4][4])
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            this->shape_type[i][j] = shape_type[i][j];
         }
     }
+}
 
-    void Shape::set_shape_cord_x(int cord_x)
+void Shape::set_shape_orientation(int shape_orientation)
+{
+    this->shape_orientation = shape_orientation;
+}
+
+void Shape::set_shape_cord_x(int cord_x)
+{
+    this->cord_x = cord_x;
+}
+
+void Shape::set_shape_cord_y(int cord_y)
+{
+    this->cord_y = cord_y;
+}
+
+void Shape::set_shape_width(int shape_width)
+{
+    this->shape_width = shape_width;
+}
+
+void Shape::set_shape_height(int shape_height)
+{
+    this->shape_height = shape_height;
+}
+
+void Shape::set_shape_x_width(int shape_x_width)
+{
+    this->shape_x_width = shape_x_width;
+}
+
+void Shape::set_shape_y_height(int shape_y_height)
+{
+    this->shape_y_height = shape_y_height;
+}
+
+void Shape::set_shape_speed(int speed)
+{
+    this->shape_speed = speed;
+}
+
+// getters
+
+std::string Shape::get_shape_name()
+{
+    return this->name;
+}
+
+SDL_Color Shape::get_shape_color()
+{
+    return this->shape_color;
+}
+
+int Shape::get_shape_type(int i, int j)
+{
+    return this->shape_type[i][j];
+}
+
+int Shape::get_shape_orientation()
+{
+    return this->shape_orientation;
+}
+
+
+int Shape::get_shape_cord_x()
+{
+    return this->cord_x;
+}
+
+int Shape::get_shape_cord_y()
+{
+    return this->cord_y;
+}
+
+int Shape::get_shape_width()
+{
+    return this->shape_width;
+}
+
+int Shape::get_shape_height()
+{
+    return this->shape_height;
+}
+
+int Shape::get_shape_type_width_x()
+{
+    return this->shape_x_width;
+}
+
+int Shape::get_shape_type_height_y()
+{
+    return this->shape_y_height;
+}
+
+int Shape::get_shape_speed()
+{
+    return this->shape_speed;
+}
+
+// miscilaneous
+
+bool Shape::inside_grid(int offset)
+{
+    int temp_x;
+    bool inside_grid_flag = true;
+
+    if (this->get_shape_cord_x() + shape_x_width + offset > workspace_x2)
+        return false;
+
+    temp_x = this->get_shape_cord_x() + offset;
+
+    int temp_y = this->get_shape_cord_y() + this->get_shape_type_height_y() + offset;
+
+    // seting gorizontal limits according to edges of the working area
     {
-        this->cord_x = cord_x;
+        if (temp_x < workspace_x1 || temp_x > workspace_x2 || temp_y < workspace_y1 || temp_y > workspacey_2)
+            inside_grid_flag = false;
     }
+    return inside_grid_flag;
+}
 
-    void Shape::set_shape_cord_y(int cord_y)
+Shape *Shape::create_shapes(const std::string &name)
+{
+    Shape *new_shape_obj = nullptr;
+
+    if (name == "Square")
     {
-        this->cord_y = cord_y;
+        new_shape_obj = new Square();
+        if (!new_shape_obj->load_shape_media("img/rect.png"))
+        {
+            std::cout << "Failed to load shape media" << std::endl;
+        }
     }
-
-    void Shape::set_shape_width(int shape_width)
+    else if (name == "Line")
     {
-        this->shape_width = shape_width;
+        new_shape_obj = new Line();
+        if (!new_shape_obj->load_shape_media("img/line.png"))
+        {
+            std::cout << "Failed to load shape media" << std::endl;
+        }
     }
-
-    void Shape::set_shape_height(int shape_height)
+    else if (name == "T")
     {
-        this->shape_height = shape_height;
+        new_shape_obj = new T();
+        if (!new_shape_obj->load_shape_media("img/T.png"))
+        {
+            std::cout << "Failed to load shape media" << std::endl;
+        }
     }
-
-    void Shape::set_shape_x_width(int shape_x_width)
+    else if (name == "L")
     {
-        this->shape_x_width = shape_x_width;
+        new_shape_obj = new L();
+        if (!new_shape_obj->load_shape_media("img/L.png"))
+        {
+            std::cout << "Failed to load shape media" << std::endl;
+        }
     }
-
-    void Shape::set_shape_y_height(int shape_y_height)
+    else if (name == "Lm")
     {
-        this->shape_y_height = shape_y_height;
+        new_shape_obj = new Lm();
+        if (!new_shape_obj->load_shape_media("img/Lm.png"))
+        {
+            std::cout << "Failed to load shape media" << std::endl;
+        }
     }
-
-    void Shape::set_shape_speed(int speed)
+    else if (name == "Z")
     {
-       this->shape_speed = speed;
+        new_shape_obj = new Z();
+        if (!new_shape_obj->load_shape_media("img/Z.png"))
+        {
+            std::cout << "Failed to load shape media" << std::endl;
+        }
     }
-
-    //getters
-
-    std::string Shape::get_shape_name()
+    else if (name == "Zm")
     {
-        return this->name;
+        new_shape_obj = new Zm();
+        if (!new_shape_obj->load_shape_media("img/Zm.png"))
+        {
+            std::cout << "Failed to load shape media" << std::endl;
+        }
     }
-
-    SDL_Color Shape::get_shape_color()
+    else
     {
-        return this->shape_color;
+        std::cout << "Invalid shape name" << std::endl;
     }
+    return new_shape_obj;
+    new_shape_obj = nullptr;
+}
 
-    int Shape::get_shape_type(int i, int j)
+void Shape::rotate_shape()
+{
+    if(this->get_shape_name() == "Square")
     {
-        return this->shape_type[i][j];
+        return;
     }
-
-    int Shape::get_shape_cord_x()
+    else if(this->get_shape_name() == "Line")
     {
-        return this->cord_x;
-    }
-
-    int Shape::get_shape_cord_y()
-    {
-        return this->cord_y;
-    }
-
-    int Shape::get_shape_width()
-    {
-        return this->shape_width;
-    }
-
-    int Shape::get_shape_height()
-    {
-        return this->shape_height;
-    }
-
-    int Shape::get_shape_type_width_x()
-    {
-        return this->shape_x_width;
-    }
-
-    int Shape::get_shape_type_height_y()
-    {
-        return this->shape_y_height;
-    }
-
-    int Shape::get_shape_speed()
-    {
-        return this->shape_speed;
-    }
-
-
-    // miscilaneous
-
-    bool Shape::inside_grid(int offset)
-    {
-        int temp_x;
-        bool inside_grid_flag = true;
+        if(this->shape_orientation == 0)
+        {
+            int shape_type[4][4] = {
+            {1, 0, 0, 0},
+            {1, 0, 0, 0},
+            {1, 0, 0, 0},
+            {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(40);
+            this->set_shape_y_height(120);
+            this->shape_orientation = 1;
+        }
+        else if(this->shape_orientation == 1)
+        {
+            int shape_type[4][4] = {
+            {1, 1, 1, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(120);
+            this->set_shape_y_height(40);
+            this->shape_orientation = 0;
+        }
         
-        if(this->get_shape_cord_x() + shape_x_width + offset > workspace_x2)
-            return false;
-
-        temp_x = this->get_shape_cord_x() + offset;
-
-
         
-        int temp_y = this->get_shape_cord_y() + this->get_shape_type_height_y() + offset;
-        
-       
-        // seting gorizontal limits according to edges of the working area
-        {
-            if (temp_x < workspace_x1 || temp_x > workspace_x2 || temp_y < workspace_y1 || temp_y > workspacey_2)
-                inside_grid_flag = false;
-        }
-        return inside_grid_flag;
     }
-
-    
-    Shape *Shape::create_shapes(const std::string &name)
+    else if(this->get_shape_name() == "T")
     {
-        Shape *new_shape_obj = nullptr;
-
-        if (name == "Square")
+        if(this->get_shape_orientation() == 0)
         {
-            new_shape_obj = new Square();
-            if (!new_shape_obj->load_shape_media("img/rect.png"))
-            {
-                std::cout << "Failed to load shape media" << std::endl;
-            }
+        int shape_type[4][4] = {
+            {0, 1, 0, 0},
+            {1, 1, 0, 0},
+            {0, 1, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(80);
+        this->set_shape_y_height(120);
+        this->set_shape_orientation(1);
         }
-        else if (name == "Line")
+        else if(this->get_shape_orientation() == 1)
         {
-            new_shape_obj = new Line();
-            if (!new_shape_obj->load_shape_media("img/line.png"))
-            {
-                std::cout << "Failed to load shape media" << std::endl;
-            }
+        int shape_type[4][4] = {
+            {0, 1, 0, 0},
+            {1, 1, 1, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(120);
+        this->set_shape_y_height(80);
+        this->set_shape_orientation(2);
         }
-        else if (name == "T")
+        else if(this->get_shape_orientation() == 2)
         {
-            new_shape_obj = new T();
-            if (!new_shape_obj->load_shape_media("img/T.png"))
-            {
-                std::cout << "Failed to load shape media" << std::endl;
-            }
+        int shape_type[4][4] = {
+            {1, 0, 0, 0},
+            {1, 1, 0, 0},
+            {1, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(80);
+        this->set_shape_y_height(120);
+        this->set_shape_orientation(0);
         }
-        else if (name == "L")
-        {
-            new_shape_obj = new L();
-            if (!new_shape_obj->load_shape_media("img/L.png"))
-            {
-                std::cout << "Failed to load shape media" << std::endl;
-            }
-        }
-        else if (name == "Lm")
-        {
-            new_shape_obj = new Lm();
-            if (!new_shape_obj->load_shape_media("img/Lm.png"))
-            {
-                std::cout << "Failed to load shape media" << std::endl;
-            }
-        }
-        else if (name == "Z")
-        {
-            new_shape_obj = new Z();
-            if (!new_shape_obj->load_shape_media("img/Z.png"))
-            {
-                std::cout << "Failed to load shape media" << std::endl;
-            }
-        }
-        else if (name == "Zm")
-        {
-            new_shape_obj = new Zm();
-            if (!new_shape_obj->load_shape_media("img/Zm.png"))
-            {
-                std::cout << "Failed to load shape media" << std::endl;
-            }
-        }
-        else
-        {
-            std::cout << "Invalid shape name" << std::endl;
-        }
-        return new_shape_obj;
-        new_shape_obj = nullptr;
     }
+    else if(this->get_shape_name() == "L")
+    {
+        
+        if(this->get_shape_orientation() == 0)
+        {
+        int shape_type[4][4] = {
+            {1, 0, 0, 0},
+            {1, 1, 1, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(120);
+        this->set_shape_y_height(80);
+        this->set_shape_orientation(1);
+        }
+        else if(this->get_shape_orientation() == 1)
+        {
+        int shape_type[4][4] = {
+            {1, 1, 0, 0},
+            {0, 1, 0, 0},
+            {0, 1, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(80);
+        this->set_shape_y_height(120);
+        this->set_shape_orientation(2);
+        }
+        else if(this->get_shape_orientation() == 2)
+        {
+        int shape_type[4][4] = {
+            {0, 0, 1, 0},
+            {1, 1, 1, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(120);
+        this->set_shape_y_height(80);
+        this->set_shape_orientation(0);
+
+        }
+
+    }
+    else if(this->get_shape_name() == "Lm")
+    {
+        
+        if(this->get_shape_orientation() == 0)
+        {
+        int shape_type[4][4] = {
+            {1, 0, 0, 0},
+            {1, 1, 1, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(120);
+        this->set_shape_y_height(80);
+        this->set_shape_orientation(1);
+        }
+        else if(this->get_shape_orientation() == 1)
+        {
+        int shape_type[4][4] = {
+            {1, 1, 0, 0},
+            {1, 0, 0, 0},
+            {1, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(80);
+        this->set_shape_y_height(120);
+        this->set_shape_orientation(2);
+        }
+        else if(this->get_shape_orientation() == 2)
+        {
+        int shape_type[4][4] = {
+            {1, 1, 1, 0},
+            {0, 0, 1, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(120);
+        this->set_shape_y_height(80);
+        this->set_shape_orientation(0);
+
+
+        }
+    }
+    else if(this->get_shape_name() == "Z")
+    {
+        if(this->get_shape_orientation() == 0)
+        {
+        int shape_type[4][4] = {
+            {1, 0, 0, 0},
+            {1, 1, 0, 0},
+            {0, 1, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(80);
+        this->set_shape_y_height(120);
+        this->set_shape_orientation(1);
+        }
+        else if(this->get_shape_orientation() == 1)
+        {
+        int shape_type[4][4] = {
+            {0, 1, 1, 0},
+            {1, 1, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(120);
+        this->set_shape_y_height(80);
+        this->set_shape_orientation(0);
+        }
+    }
+    else if(this->get_shape_name() == "Zm")
+    {
+        if(this->get_shape_orientation() == 0)
+        {
+        int shape_type[4][4] = {
+            {0, 1, 0, 0},
+            {1, 1, 0, 0},
+            {1, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(80);
+        this->set_shape_y_height(120);
+        this->set_shape_orientation(1);
+        }
+        else if(this->get_shape_orientation() == 1)
+        {
+        int shape_type[4][4] = {
+            {1, 1, 0, 0},
+            {0, 1, 1, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}};
+        this->set_shape_type(shape_type);
+        this->set_shape_x_width(120);
+        this->set_shape_y_height(80);
+        this->set_shape_orientation(0);
+        }
+    }
+}
