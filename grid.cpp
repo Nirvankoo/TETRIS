@@ -87,11 +87,8 @@ void Grid::set_grid(Shape *current_shape)
 
 char Grid::get_grid(int i, int j)
 {
-    if (i >= 0 && i < GRID_ROWS && j >= 0 && j < GRID_COLUMNS)
-    {
-        return grid[i][j];
-    }
-    return false;
+    return grid[i][j];
+    
 }
 
 void Grid::show_grid()

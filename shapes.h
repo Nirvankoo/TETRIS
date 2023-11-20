@@ -4,6 +4,7 @@
 #include<string>
 
 
+class Grid;// Forward declaration of Shape
 
 
 //base class of all shapes
@@ -67,6 +68,7 @@ class Shape
     bool inside_grid(int offset);
     static Shape *create_shapes(const std::string &name);
     void rotate_shape();
+    bool collision_detection(Grid &grid_obj);
 };
 
 class Square : public Shape

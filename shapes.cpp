@@ -112,7 +112,11 @@ void Shape::handle_shape_event(SDL_Event *e)
             if (this->inside_grid(temp_x))
             {
                 this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
-                Mix_PlayChannel(-1, button_click, 0);
+                
+                if(sound_effect)
+                    {
+                        Mix_PlayChannel(-1, button_click, 0);
+                    }
             }
             else
             {
@@ -127,7 +131,10 @@ void Shape::handle_shape_event(SDL_Event *e)
             if (this->inside_grid(temp_x))
             {
                 this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
-                Mix_PlayChannel(-1, button_click, 0);
+                if(sound_effect)
+                    {
+                        Mix_PlayChannel(-1, button_click, 0);
+                    }
             }
             else
             {
@@ -138,21 +145,26 @@ void Shape::handle_shape_event(SDL_Event *e)
         case SDLK_r:
         {
             this->rotate_shape();
-            Mix_PlayChannel(-1, button_click, 0);
+           if(sound_effect)
+                    {
+                        Mix_PlayChannel(-1, button_click, 0);
+                    }
             break;
         }
         case SDLK_SPACE:
         {
-           
+
             this->set_shape_speed(BOOST);
-            Mix_PlayChannel(-1, button_click, 0);
-          
+            if(sound_effect)
+                    {
+                        Mix_PlayChannel(-1, button_click, 0);
+                    }
+
             break;
         }
         default:
             break;
         }
-      
     }
 }
 
@@ -238,7 +250,6 @@ int Shape::get_shape_orientation()
 {
     return this->shape_orientation;
 }
-
 
 int Shape::get_shape_cord_x()
 {
@@ -367,214 +378,246 @@ Shape *Shape::create_shapes(const std::string &name)
 
 void Shape::rotate_shape()
 {
-    if(this->get_shape_name() == "Square")
+    if (this->get_shape_name() == "Square")
     {
         return;
     }
-    else if(this->get_shape_name() == "Line")
+    else if (this->get_shape_name() == "Line")
     {
-        if(this->shape_orientation == 0)
+        if (this->shape_orientation == 0)
         {
             int shape_type[4][4] = {
-            {1, 0, 0, 0},
-            {1, 0, 0, 0},
-            {1, 0, 0, 0},
-            {0, 0, 0, 0}};
+                {1, 0, 0, 0},
+                {1, 0, 0, 0},
+                {1, 0, 0, 0},
+                {0, 0, 0, 0}};
             this->set_shape_type(shape_type);
             this->set_shape_x_width(40);
             this->set_shape_y_height(120);
             this->shape_orientation = 1;
         }
-        else if(this->shape_orientation == 1)
+        else if (this->shape_orientation == 1)
         {
             int shape_type[4][4] = {
-            {1, 1, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}};
+                {1, 1, 1, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
             this->set_shape_type(shape_type);
             this->set_shape_x_width(120);
             this->set_shape_y_height(40);
             this->shape_orientation = 0;
         }
-        
-        
     }
-    else if(this->get_shape_name() == "T")
+    else if (this->get_shape_name() == "T")
     {
-        if(this->get_shape_orientation() == 0)
+        if (this->get_shape_orientation() == 0)
         {
-        int shape_type[4][4] = {
-            {0, 1, 0, 0},
-            {1, 1, 0, 0},
-            {0, 1, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(80);
-        this->set_shape_y_height(120);
-        this->set_shape_orientation(1);
+            int shape_type[4][4] = {
+                {0, 1, 0, 0},
+                {1, 1, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
+            this->set_shape_orientation(1);
         }
-        else if(this->get_shape_orientation() == 1)
+        else if (this->get_shape_orientation() == 1)
         {
-        int shape_type[4][4] = {
-            {0, 1, 0, 0},
-            {1, 1, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(120);
-        this->set_shape_y_height(80);
-        this->set_shape_orientation(2);
+            int shape_type[4][4] = {
+                {0, 1, 0, 0},
+                {1, 1, 1, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(120);
+            this->set_shape_y_height(80);
+            this->set_shape_orientation(2);
         }
-        else if(this->get_shape_orientation() == 2)
+        else if (this->get_shape_orientation() == 2)
         {
-        int shape_type[4][4] = {
-            {1, 0, 0, 0},
-            {1, 1, 0, 0},
-            {1, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(80);
-        this->set_shape_y_height(120);
-        this->set_shape_orientation(0);
+            int shape_type[4][4] = {
+                {1, 0, 0, 0},
+                {1, 1, 0, 0},
+                {1, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
+            this->set_shape_orientation(0);
         }
     }
-    else if(this->get_shape_name() == "L")
+    else if (this->get_shape_name() == "L")
     {
-        
-        if(this->get_shape_orientation() == 0)
-        {
-        int shape_type[4][4] = {
-            {1, 0, 0, 0},
-            {1, 1, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(120);
-        this->set_shape_y_height(80);
-        this->set_shape_orientation(1);
-        }
-        else if(this->get_shape_orientation() == 1)
-        {
-        int shape_type[4][4] = {
-            {1, 1, 0, 0},
-            {0, 1, 0, 0},
-            {0, 1, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(80);
-        this->set_shape_y_height(120);
-        this->set_shape_orientation(2);
-        }
-        else if(this->get_shape_orientation() == 2)
-        {
-        int shape_type[4][4] = {
-            {0, 0, 1, 0},
-            {1, 1, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(120);
-        this->set_shape_y_height(80);
-        this->set_shape_orientation(0);
 
-        }
-
-    }
-    else if(this->get_shape_name() == "Lm")
-    {
-        
-        if(this->get_shape_orientation() == 0)
+        if (this->get_shape_orientation() == 0)
         {
-        int shape_type[4][4] = {
-            {1, 0, 0, 0},
-            {1, 1, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(120);
-        this->set_shape_y_height(80);
-        this->set_shape_orientation(1);
+            int shape_type[4][4] = {
+                {1, 0, 0, 0},
+                {1, 1, 1, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(120);
+            this->set_shape_y_height(80);
+            this->set_shape_orientation(1);
         }
-        else if(this->get_shape_orientation() == 1)
+        else if (this->get_shape_orientation() == 1)
         {
-        int shape_type[4][4] = {
-            {1, 1, 0, 0},
-            {1, 0, 0, 0},
-            {1, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(80);
-        this->set_shape_y_height(120);
-        this->set_shape_orientation(2);
+            int shape_type[4][4] = {
+                {1, 1, 0, 0},
+                {0, 1, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
+            this->set_shape_orientation(2);
         }
-        else if(this->get_shape_orientation() == 2)
+        else if (this->get_shape_orientation() == 2)
         {
-        int shape_type[4][4] = {
-            {1, 1, 1, 0},
-            {0, 0, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(120);
-        this->set_shape_y_height(80);
-        this->set_shape_orientation(0);
-
-
+            int shape_type[4][4] = {
+                {0, 0, 1, 0},
+                {1, 1, 1, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(120);
+            this->set_shape_y_height(80);
+            this->set_shape_orientation(0);
         }
     }
-    else if(this->get_shape_name() == "Z")
+    else if (this->get_shape_name() == "Lm")
     {
-        if(this->get_shape_orientation() == 0)
+
+        if (this->get_shape_orientation() == 0)
         {
-        int shape_type[4][4] = {
-            {1, 0, 0, 0},
-            {1, 1, 0, 0},
-            {0, 1, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(80);
-        this->set_shape_y_height(120);
-        this->set_shape_orientation(1);
+            int shape_type[4][4] = {
+                {1, 0, 0, 0},
+                {1, 1, 1, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(120);
+            this->set_shape_y_height(80);
+            this->set_shape_orientation(1);
         }
-        else if(this->get_shape_orientation() == 1)
+        else if (this->get_shape_orientation() == 1)
         {
-        int shape_type[4][4] = {
-            {0, 1, 1, 0},
-            {1, 1, 0, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(120);
-        this->set_shape_y_height(80);
-        this->set_shape_orientation(0);
+            int shape_type[4][4] = {
+                {1, 1, 0, 0},
+                {1, 0, 0, 0},
+                {1, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
+            this->set_shape_orientation(2);
+        }
+        else if (this->get_shape_orientation() == 2)
+        {
+            int shape_type[4][4] = {
+                {1, 1, 1, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(120);
+            this->set_shape_y_height(80);
+            this->set_shape_orientation(0);
         }
     }
-    else if(this->get_shape_name() == "Zm")
+    else if (this->get_shape_name() == "Z")
     {
-        if(this->get_shape_orientation() == 0)
+        if (this->get_shape_orientation() == 0)
         {
-        int shape_type[4][4] = {
-            {0, 1, 0, 0},
-            {1, 1, 0, 0},
-            {1, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(80);
-        this->set_shape_y_height(120);
-        this->set_shape_orientation(1);
+            int shape_type[4][4] = {
+                {1, 0, 0, 0},
+                {1, 1, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
+            this->set_shape_orientation(1);
         }
-        else if(this->get_shape_orientation() == 1)
+        else if (this->get_shape_orientation() == 1)
         {
-        int shape_type[4][4] = {
-            {1, 1, 0, 0},
-            {0, 1, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}};
-        this->set_shape_type(shape_type);
-        this->set_shape_x_width(120);
-        this->set_shape_y_height(80);
-        this->set_shape_orientation(0);
+            int shape_type[4][4] = {
+                {0, 1, 1, 0},
+                {1, 1, 0, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(120);
+            this->set_shape_y_height(80);
+            this->set_shape_orientation(0);
+        }
+    }
+    else if (this->get_shape_name() == "Zm")
+    {
+        if (this->get_shape_orientation() == 0)
+        {
+            int shape_type[4][4] = {
+                {0, 1, 0, 0},
+                {1, 1, 0, 0},
+                {1, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
+            this->set_shape_orientation(1);
+        }
+        else if (this->get_shape_orientation() == 1)
+        {
+            int shape_type[4][4] = {
+                {1, 1, 0, 0},
+                {0, 1, 1, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(120);
+            this->set_shape_y_height(80);
+            this->set_shape_orientation(0);
         }
     }
 }
+
+bool Shape::collision_detection(Grid &grid_obj)
+{
+    bool collision_flag = false;
+    int shape_type_temp[4][4];
+
+    // Copy the shape_type to a temporary array
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
+            shape_type_temp[i][j] = this->get_shape_type(i, j);
+        }
+    }
+
+    // Get the shape coordinates
+    int shape_cord_x = (this->get_shape_cord_x() - GRID_START_X) / 40;
+    int shape_cord_y = (this->get_shape_cord_y()) / 40;
+
+    // Check if the shape is colliding with the grid
+   for(int i = 0; i < 4; ++i)
+   {
+    for(int j = 0; j < 4; ++j)
+    {
+        if(shape_type_temp[i][j] == 1)
+        {
+            int grid_x = shape_cord_x + j;
+            int grid_y = shape_cord_y + i;
+            if(grid_obj.get_grid(grid_y, grid_x) != '*')
+            {
+                collision_flag = true;
+            }
+        }
+    }
+   }
+    return collision_flag;
+}
+

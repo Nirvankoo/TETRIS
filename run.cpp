@@ -44,7 +44,7 @@ void run()
         return;
     }
 
-    if(!grid_obj.load_grid_media())
+    if (!grid_obj.load_grid_media())
     {
         std::cout << "Failed to load grid media!" << std::endl;
         destroy_button();
@@ -75,8 +75,6 @@ void run()
             current_shape->handle_shape_event(&e);
         }
 
-       
-
         SDL_RenderClear(renderer);
 
         SDL_RenderCopy(renderer, existing_texture, NULL, NULL);
@@ -106,19 +104,19 @@ void run()
         }
 
         // Render all shapes in the container
-        //for (Shape *shape : shapes_container)
-        //shape->render_shape(shape->get_shape_cord_x(), shape->get_shape_cord_y(), NULL);
+        // for (Shape *shape : shapes_container)
+        // shape->render_shape(shape->get_shape_cord_x(), shape->get_shape_cord_y(), NULL);
         grid_obj.render_grid();
         // Render the current shape
         if (current_shape != nullptr)
         {
-            std::cout << "Shape coordinates: (" << current_shape->get_shape_cord_x() << ", " << current_shape->get_shape_cord_y() << ")" << std::endl;
+            // std::cout << "Shape coordinates: (" << current_shape->get_shape_cord_x() << ", " << current_shape->get_shape_cord_y() << ")" << std::endl;
 
             current_shape->render_shape(current_shape->get_shape_cord_x(), current_shape->get_shape_cord_y(), NULL);
 
             if (current_time - last_time > 10)
             {
-                if (current_shape->inside_grid(0))
+                if (current_shape->inside_grid(0) && (!current_shape->collision_detection(grid_obj)))
                 {
                     if (space_key_pressed)
                     {
@@ -133,44 +131,18 @@ void run()
                 }
                 else
                 {
-                    int cord_x_temp = current_shape->get_shape_cord_x();
-                    int cord_y_temp = current_shape->get_shape_cord_y();
+                    if(current_shape->collision_detection(grid_obj))
+                    current_shape->set_shape_cord_y(current_shape->get_shape_cord_y() - 40);
+                    else if(!current_shape->inside_grid(0))
+                    current_shape->set_shape_cord_y(current_shape->get_shape_cord_y());
 
-                    if (cord_x_temp >= 300 && cord_x_temp <= 700 && cord_y_temp >= 0 && cord_y_temp <= 800)
-                    {
-                        int grid_x = std::abs((cord_x_temp - 300) / 40);
-                        int grid_y = std::abs(cord_y_temp / 40);
+                    
+                    grid_obj.set_grid(current_shape);
+                    grid_obj.show_grid();
+                    shapes_container.push_back(current_shape); // Add the new shape to the container
 
-                        
-
-                        std::cout << "grid_x: " << grid_x << std::endl;
-                        std::cout << "grid_y: " << grid_y << std::endl;
-
-                       
-                    }
-                    else
-                    {
-                        std::cout << "Outside grid" << std::endl;
-                    }
-
-                    // Update shape's position only when inside the grid
-                    current_shape->set_shape_cord_y(current_shape->get_shape_cord_y() + current_shape->get_shape_speed());
-
-                    // Stop shape at the bottom
-                    if (!current_shape->inside_grid(0))
-                    {
-                        current_shape->set_shape_cord_y(800 - current_shape->get_shape_type_height_y());
-
-                        shapes_container.push_back(current_shape); // Add the new shape to the container
-                        
-
-                        
-                        grid_obj.set_grid(current_shape);
-                        grid_obj.show_grid();
-                        
-                        current_shape = nullptr;                   // Reset current_shape to avoid rendering it in the next frame
-                        next_shape_flag = true;
-                    }
+                    current_shape = nullptr; // Reset current_shape to avoid rendering it in the next frame
+                    next_shape_flag = true;
 
                     last_time = current_time;
                 }
@@ -178,5 +150,4 @@ void run()
         }
         SDL_RenderPresent(renderer);
     }
-    
 }
