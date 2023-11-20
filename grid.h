@@ -1,6 +1,8 @@
 #ifndef GRID_H
 #define GRID_H
 #include "shapes.h"
+#include <SDL2/SDL.h>
+#include <vector>
 //      int x =400
 // __________
 // |        |
@@ -23,12 +25,17 @@ class Grid
     Grid();
     ~Grid();
     void set_grid(Shape *current_shape);
-    bool get_grid(int x, int y);
+    char get_grid(int x, int y);
     bool inside_grid(int offset);
     void show_grid();
-    
+
+    bool load_grid_media();
+    void render_grid();
+   
     private:
-    bool grid[GRID_ROWS][GRID_COLUMNS];
+    char grid[GRID_ROWS][GRID_COLUMNS];
+   std::vector<SDL_Texture*> grid_texture;
+   std::vector<SDL_Surface*> grid_surface;
 
 };
 

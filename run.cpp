@@ -44,6 +44,17 @@ void run()
         return;
     }
 
+    if(!grid_obj.load_grid_media())
+    {
+        std::cout << "Failed to load grid media!" << std::endl;
+        destroy_button();
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(main_window);
+        IMG_Quit();
+        SDL_Quit();
+        return;
+    }
+
     Uint32 last_time = SDL_GetTicks();
     SDL_Event e;
 
@@ -95,9 +106,9 @@ void run()
         }
 
         // Render all shapes in the container
-        for (Shape *shape : shapes_container)
-            shape->render_shape(shape->get_shape_cord_x(), shape->get_shape_cord_y(), NULL);
-
+        //for (Shape *shape : shapes_container)
+        //shape->render_shape(shape->get_shape_cord_x(), shape->get_shape_cord_y(), NULL);
+        grid_obj.render_grid();
         // Render the current shape
         if (current_shape != nullptr)
         {
@@ -151,6 +162,8 @@ void run()
                         current_shape->set_shape_cord_y(800 - current_shape->get_shape_type_height_y());
 
                         shapes_container.push_back(current_shape); // Add the new shape to the container
+                        
+
                         
                         grid_obj.set_grid(current_shape);
                         grid_obj.show_grid();
