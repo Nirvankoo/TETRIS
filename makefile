@@ -4,7 +4,7 @@ LIBS = -lmingw32 -lSDL2main -lSDL2 -L$(PROJECT_DIR)/src/lib -lSDL2_image -lSDL2_
 
 PROJECT_DIR = .
 
-SOURCES = main.cpp window.cpp game.cpp button.cpp button_set.cpp shapes.cpp run.cpp velocity.cpp grid.cpp random.cpp
+SOURCES = main.cpp window.cpp game.cpp button.cpp button_set.cpp shapes.cpp run.cpp velocity.cpp grid.cpp random.cpp score.cpp
 
 all: $(SOURCES)
 	$(CXX) $(CXXFLAGS) -o main $^ $(LIBS)

@@ -7,16 +7,22 @@
 #include "shapes.h"
 #include "velocity.h"
 #include "grid.h"
+#include "score.h"
 #include <cmath>
 #include "random.h"
 #include <vector>
 #include <algorithm>
+
+
 
 // objects instances
 //********************************************************************************************************************
 Grid grid_obj;
 bool run_flag = false;
 Shape *current_shape = nullptr;
+
+Score score_obj;
+
 
 std::vector<Shape *> shapes_container;
 
@@ -85,6 +91,8 @@ void run()
         // button settings !!!!!!!!!!!!!!!!!!!!
         create_button_set(button_music_switch, 10, 10);
         create_button_set(button_sound_switch, 10, 50);
+        //score!!!!!!!!!!!!!!!!!!!!!!!
+        score_obj.show_score_on_screen(800, 50);
 
         // create shapes
         if (start_button && next_shape_flag)
@@ -99,7 +107,7 @@ void run()
                 std::cout << "current shape is null" << std::endl;
             }
 
-            shapes_container.push_back(current_shape); // Add the new shape to the container
+            //shapes_container.push_back(current_shape); // Add the new shape to the container
             next_shape_flag = false;
         }
 
@@ -114,7 +122,7 @@ void run()
 
             current_shape->render_shape(current_shape->get_shape_cord_x(), current_shape->get_shape_cord_y(), NULL);
 
-            if (current_time - last_time > 10)
+            if (current_time - last_time > TIME_STEP)
             {
                 if (current_shape->inside_grid(0) && (!current_shape->collision_detection(grid_obj)))
                 {
@@ -124,7 +132,7 @@ void run()
                     }
                     else
                     {
-                        current_shape->set_shape_cord_y(current_shape->get_shape_cord_y() + current_shape->get_shape_speed());
+                        current_shape->set_shape_cord_y(current_shape->get_shape_cord_y() + current_shape->get_shape_speed() + score_obj.get_level());
                     }
 
                     last_time = current_time;
@@ -137,7 +145,18 @@ void run()
                     current_shape->set_shape_cord_y(current_shape->get_shape_cord_y());
 
                     
+                    
                     grid_obj.set_grid(current_shape);
+                    grid_obj.destroy_line(score_obj);
+                    if(score_obj.get_score() >= 1000)
+                    {
+                        score_obj.set_level();
+                    }
+                    
+                    if(grid_obj.lose_game())
+                    {
+                        run_flag = true;
+                    }
                     grid_obj.show_grid();
                     shapes_container.push_back(current_shape); // Add the new shape to the container
 
@@ -150,4 +169,20 @@ void run()
         }
         SDL_RenderPresent(renderer);
     }
+
+    SDL_DestroyTexture(existing_texture);
+    
+    
+
+   
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(main_window);
+    score_obj.~Score();
+    destroy_button();
+    grid_obj.~Grid();
+    
+
+    IMG_Quit();
+    SDL_Quit();
+
 }

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include"window.h"
+#include"score.h"
 
 Grid::Grid()
 {
@@ -21,7 +22,15 @@ Grid::Grid()
 
 Grid::~Grid()
 {
-   
+    for (SDL_Texture* texture : grid_texture) {
+        SDL_DestroyTexture(texture);
+    }
+    grid_texture.clear();
+
+    for (SDL_Surface* surface : grid_surface) {
+        SDL_FreeSurface(surface);
+    }
+    grid_surface.clear();
 }
 
 void Grid::set_grid(Shape *current_shape)
@@ -244,3 +253,42 @@ void Grid::render_grid()
    }
 }
 
+void Grid::destroy_line(Score &obj)
+{
+    for(int i = 0; i < GRID_ROWS; i++)
+    {
+        int count = 0;
+        for(int j = 0; j < GRID_COLUMNS; j++)
+        {
+            if(grid[i][j] != '*')
+            {
+                count++;
+            }
+        }
+        if(count == GRID_COLUMNS)
+        {
+            for(int k = i; k > 0; k--)
+            {
+                for(int l = 0; l < GRID_COLUMNS; l++)
+                {
+                    obj.set_score(obj.get_score() + 1);
+                    grid[k][l] = grid[k - 1][l];
+                }
+
+            }
+        }
+    }
+}
+
+bool Grid::lose_game()
+{
+    for(int i = 0; i < GRID_COLUMNS; i++)
+    {
+        if(grid[0][i] != '*')
+        {
+            std::cout << "You lose!" << std::endl;
+            return true;
+        }
+    }
+    return false;
+}

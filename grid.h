@@ -1,6 +1,7 @@
 #ifndef GRID_H
 #define GRID_H
 #include "shapes.h"
+#include "score.h"
 #include <SDL2/SDL.h>
 #include <vector>
 //      int x =400
@@ -31,6 +32,8 @@ class Grid
 
     bool load_grid_media();
     void render_grid();
+    void destroy_line(Score &score_obj);
+    bool lose_game();
    
     private:
     char grid[GRID_ROWS][GRID_COLUMNS];

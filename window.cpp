@@ -25,6 +25,12 @@ Window_class::Window_class()
     width = 0;
 }
 
+Window_class::~Window_class()
+{
+    height = 0;
+    width = 0;
+}
+
 Window_class::Window_class(int x, int y)
 {
     height = x;

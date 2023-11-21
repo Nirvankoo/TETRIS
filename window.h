@@ -12,6 +12,7 @@ class Window_class{
     int width;
     public:
     Window_class();
+    ~Window_class();
     Window_class(int x, int y);
     int get_window_height();
     int get_window_width();
@@ -20,6 +21,7 @@ class Window_class{
 SDL_Surface *window_load_surface(const std::string &path);
 bool init_window(Window_class window_class);
 bool load_audio();
+
 
 
 extern SDL_Window *main_window;

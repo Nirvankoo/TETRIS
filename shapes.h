@@ -262,6 +262,7 @@ extern Shape *current_shape;
 extern bool next_shape_flag;
 extern bool space_key_pressed;
 Shape create_shapes(const std::string &name);
+extern Uint32 TIME_STEP;
 
     
 

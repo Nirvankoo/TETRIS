@@ -45,6 +45,8 @@ Button::~Button()
     button_position.x = 0;
     button_position.y = 0;
     button_current_sprite = BUTTON_SPRITE_MOUSE_OUT;
+    button_texture = NULL;
+    button_name = "";
 }
 
 bool Button::button_load_media(std::string path)

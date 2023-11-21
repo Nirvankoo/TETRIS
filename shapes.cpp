@@ -5,12 +5,14 @@
 #include <string>
 #include "window.h"
 #include "grid.h"
-#define BOOST 30
+#define BOOST 40
 
 int const workspace_x1 = 300;
 int const workspace_y1 = 0;
 int const workspace_x2 = 700;
 int const workspacey_2 = 800;
+
+Uint32 TIME_STEP = 32;
 
 bool space_key_pressed = false;
 
@@ -91,6 +93,8 @@ bool Shape::load_shape_media(std::string path)
         }
         SDL_FreeSurface(loaded_surface);
     }
+
+
     return success;
 }
 
@@ -109,7 +113,7 @@ void Shape::handle_shape_event(SDL_Event *e)
         case SDLK_LEFT:
         {
             int temp_x = -40;
-            if (this->inside_grid(temp_x))
+            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj))
             {
                 this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
                 
@@ -128,7 +132,7 @@ void Shape::handle_shape_event(SDL_Event *e)
         case SDLK_RIGHT:
         {
             int temp_x = 40;
-            if (this->inside_grid(temp_x))
+            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj))
             {
                 this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
                 if(sound_effect)
@@ -144,7 +148,9 @@ void Shape::handle_shape_event(SDL_Event *e)
         }
         case SDLK_r:
         {
+            if((this->get_shape_cord_x() + (this->get_shape_type_width_x()) < workspace_x2))
             this->rotate_shape();
+
            if(sound_effect)
                     {
                         Mix_PlayChannel(-1, button_click, 0);
@@ -445,8 +451,21 @@ void Shape::rotate_shape()
             this->set_shape_type(shape_type);
             this->set_shape_x_width(80);
             this->set_shape_y_height(120);
+            this->set_shape_orientation(3);
+        }
+        else if(this->get_shape_orientation()== 3)
+        {
+            int shape_type[4][4] = {
+                {1, 1, 1, 0},
+                {0, 1, 0, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
             this->set_shape_orientation(0);
         }
+        
     }
     else if (this->get_shape_name() == "L")
     {
@@ -454,8 +473,8 @@ void Shape::rotate_shape()
         if (this->get_shape_orientation() == 0)
         {
             int shape_type[4][4] = {
-                {1, 0, 0, 0},
                 {1, 1, 1, 0},
+                {1, 0, 0, 0},
                 {0, 0, 0, 0},
                 {0, 0, 0, 0}};
             this->set_shape_type(shape_type);
@@ -463,6 +482,7 @@ void Shape::rotate_shape()
             this->set_shape_y_height(80);
             this->set_shape_orientation(1);
         }
+        
         else if (this->get_shape_orientation() == 1)
         {
             int shape_type[4][4] = {
@@ -475,7 +495,7 @@ void Shape::rotate_shape()
             this->set_shape_y_height(120);
             this->set_shape_orientation(2);
         }
-        else if (this->get_shape_orientation() == 2)
+        else if(this->get_shape_orientation() == 2)
         {
             int shape_type[4][4] = {
                 {0, 0, 1, 0},
@@ -485,12 +505,26 @@ void Shape::rotate_shape()
             this->set_shape_type(shape_type);
             this->set_shape_x_width(120);
             this->set_shape_y_height(80);
+            this->set_shape_orientation(3);
+        }
+        else if(this->get_shape_orientation() == 3)
+        {
+            int shape_type[4][4] = {
+                {1, 0, 0, 0},
+                {1, 0, 0, 0},
+                {1, 1, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
             this->set_shape_orientation(0);
         }
+
     }
     else if (this->get_shape_name() == "Lm")
     {
 
+        
         if (this->get_shape_orientation() == 0)
         {
             int shape_type[4][4] = {
@@ -515,7 +549,7 @@ void Shape::rotate_shape()
             this->set_shape_y_height(120);
             this->set_shape_orientation(2);
         }
-        else if (this->get_shape_orientation() == 2)
+        else if(this->get_shape_orientation() == 2)
         {
             int shape_type[4][4] = {
                 {1, 1, 1, 0},
@@ -525,17 +559,31 @@ void Shape::rotate_shape()
             this->set_shape_type(shape_type);
             this->set_shape_x_width(120);
             this->set_shape_y_height(80);
+            this->set_shape_orientation(3);
+            
+        }
+        else if(this->get_shape_orientation() == 3)
+        {
+            int shape_type[4][4] = {
+                {0, 1, 0, 0},
+                {0, 1, 0, 0},
+                {1, 1, 0, 0},
+                {0, 0, 0, 0}};
+            this->set_shape_type(shape_type);
+            this->set_shape_x_width(80);
+            this->set_shape_y_height(120);
             this->set_shape_orientation(0);
         }
+
     }
     else if (this->get_shape_name() == "Z")
     {
-        if (this->get_shape_orientation() == 0)
+       if (this->get_shape_orientation() == 0)
         {
             int shape_type[4][4] = {
-                {1, 0, 0, 0},
-                {1, 1, 0, 0},
                 {0, 1, 0, 0},
+                {1, 1, 0, 0},
+                {1, 0, 0, 0},
                 {0, 0, 0, 0}};
             this->set_shape_type(shape_type);
             this->set_shape_x_width(80);
@@ -545,8 +593,8 @@ void Shape::rotate_shape()
         else if (this->get_shape_orientation() == 1)
         {
             int shape_type[4][4] = {
-                {0, 1, 1, 0},
                 {1, 1, 0, 0},
+                {0, 1, 1, 0},
                 {0, 0, 0, 0},
                 {0, 0, 0, 0}};
             this->set_shape_type(shape_type);
@@ -560,9 +608,9 @@ void Shape::rotate_shape()
         if (this->get_shape_orientation() == 0)
         {
             int shape_type[4][4] = {
-                {0, 1, 0, 0},
-                {1, 1, 0, 0},
                 {1, 0, 0, 0},
+                {1, 1, 0, 0},
+                {0, 1, 0, 0},
                 {0, 0, 0, 0}};
             this->set_shape_type(shape_type);
             this->set_shape_x_width(80);
@@ -572,8 +620,8 @@ void Shape::rotate_shape()
         else if (this->get_shape_orientation() == 1)
         {
             int shape_type[4][4] = {
-                {1, 1, 0, 0},
                 {0, 1, 1, 0},
+                {1, 1, 0, 0},
                 {0, 0, 0, 0},
                 {0, 0, 0, 0}};
             this->set_shape_type(shape_type);
