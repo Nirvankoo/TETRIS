@@ -21,6 +21,7 @@ class Window_class{
 SDL_Surface *window_load_surface(const std::string &path);
 bool init_window(Window_class window_class);
 bool load_audio();
+void close_window();
 
 
 

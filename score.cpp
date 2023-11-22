@@ -17,7 +17,7 @@ Score::Score()
 Score::~Score()
 {
     score = 0;
-    level = 1;
+    level = 0;
 }
 
 void Score::set_score(int score)

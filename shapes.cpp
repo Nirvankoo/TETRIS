@@ -113,7 +113,7 @@ void Shape::handle_shape_event(SDL_Event *e)
         case SDLK_LEFT:
         {
             int temp_x = -40;
-            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj))
+            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj, temp_x))
             {
                 this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
                 
@@ -132,7 +132,7 @@ void Shape::handle_shape_event(SDL_Event *e)
         case SDLK_RIGHT:
         {
             int temp_x = 40;
-            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj))
+            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj, temp_x))
             {
                 this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
                 if(sound_effect)
@@ -148,8 +148,18 @@ void Shape::handle_shape_event(SDL_Event *e)
         }
         case SDLK_r:
         {
-            if((this->get_shape_cord_x() + (this->get_shape_type_width_x()) < workspace_x2))
-            this->rotate_shape();
+            if((!(this->get_shape_cord_x() + 120 > workspace_x2)))
+            {
+                if(this->inside_grid(0) && !this->collision_detection(grid_obj, 80))
+                {
+                    this->rotate_shape();
+                }
+            }
+            else
+            {
+                std::cout << "Outside grid" << std::endl;
+            }
+            
 
            if(sound_effect)
                     {
@@ -324,6 +334,8 @@ Shape *Shape::create_shapes(const std::string &name)
         if (!new_shape_obj->load_shape_media("img/rect.png"))
         {
             std::cout << "Failed to load shape media" << std::endl;
+            delete  new_shape_obj;
+            new_shape_obj = nullptr;
         }
     }
     else if (name == "Line")
@@ -332,6 +344,8 @@ Shape *Shape::create_shapes(const std::string &name)
         if (!new_shape_obj->load_shape_media("img/line.png"))
         {
             std::cout << "Failed to load shape media" << std::endl;
+             delete  new_shape_obj;
+            new_shape_obj = nullptr;
         }
     }
     else if (name == "T")
@@ -340,6 +354,8 @@ Shape *Shape::create_shapes(const std::string &name)
         if (!new_shape_obj->load_shape_media("img/T.png"))
         {
             std::cout << "Failed to load shape media" << std::endl;
+             delete  new_shape_obj;
+            new_shape_obj = nullptr;
         }
     }
     else if (name == "L")
@@ -348,6 +364,8 @@ Shape *Shape::create_shapes(const std::string &name)
         if (!new_shape_obj->load_shape_media("img/L.png"))
         {
             std::cout << "Failed to load shape media" << std::endl;
+             delete  new_shape_obj;
+            new_shape_obj = nullptr;
         }
     }
     else if (name == "Lm")
@@ -356,6 +374,8 @@ Shape *Shape::create_shapes(const std::string &name)
         if (!new_shape_obj->load_shape_media("img/Lm.png"))
         {
             std::cout << "Failed to load shape media" << std::endl;
+             delete  new_shape_obj;
+            new_shape_obj = nullptr;
         }
     }
     else if (name == "Z")
@@ -364,6 +384,8 @@ Shape *Shape::create_shapes(const std::string &name)
         if (!new_shape_obj->load_shape_media("img/Z.png"))
         {
             std::cout << "Failed to load shape media" << std::endl;
+             delete  new_shape_obj;
+            new_shape_obj = nullptr;
         }
     }
     else if (name == "Zm")
@@ -372,6 +394,8 @@ Shape *Shape::create_shapes(const std::string &name)
         if (!new_shape_obj->load_shape_media("img/Zm.png"))
         {
             std::cout << "Failed to load shape media" << std::endl;
+             delete  new_shape_obj;
+            new_shape_obj = nullptr;
         }
     }
     else
@@ -379,7 +403,6 @@ Shape *Shape::create_shapes(const std::string &name)
         std::cout << "Invalid shape name" << std::endl;
     }
     return new_shape_obj;
-    new_shape_obj = nullptr;
 }
 
 void Shape::rotate_shape()
@@ -632,7 +655,7 @@ void Shape::rotate_shape()
     }
 }
 
-bool Shape::collision_detection(Grid &grid_obj)
+bool Shape::collision_detection(Grid &grid_obj, int offset)
 {
     bool collision_flag = false;
     int shape_type_temp[4][4];
@@ -647,7 +670,7 @@ bool Shape::collision_detection(Grid &grid_obj)
     }
 
     // Get the shape coordinates
-    int shape_cord_x = (this->get_shape_cord_x() - GRID_START_X) / 40;
+    int shape_cord_x = (this->get_shape_cord_x() - GRID_START_X + offset) / 40;
     int shape_cord_y = (this->get_shape_cord_y()) / 40;
 
     // Check if the shape is colliding with the grid
