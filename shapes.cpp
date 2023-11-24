@@ -113,7 +113,7 @@ void Shape::handle_shape_event(SDL_Event *e)
         case SDLK_LEFT:
         {
             int temp_x = -40;
-            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj, temp_x))
+            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj, temp_x, 0))
             {
                 this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
                 
@@ -132,7 +132,7 @@ void Shape::handle_shape_event(SDL_Event *e)
         case SDLK_RIGHT:
         {
             int temp_x = 40;
-            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj, temp_x))
+            if (this->inside_grid(temp_x) && !this->collision_detection(grid_obj, temp_x, 0))
             {
                 this->set_shape_cord_x(this->get_shape_cord_x() + temp_x);
                 if(sound_effect)
@@ -150,7 +150,7 @@ void Shape::handle_shape_event(SDL_Event *e)
         {
             if((!(this->get_shape_cord_x() + 120 > workspace_x2)))
             {
-                if(this->inside_grid(0) && !this->collision_detection(grid_obj, 80))
+                if(this->inside_grid(0) && !this->collision_detection(grid_obj, 80, 0))
                 {
                     this->rotate_shape();
                 }
@@ -655,7 +655,7 @@ void Shape::rotate_shape()
     }
 }
 
-bool Shape::collision_detection(Grid &grid_obj, int offset)
+bool Shape::collision_detection(Grid &grid_obj, int offset_x, int offset_y)
 {
     bool collision_flag = false;
     int shape_type_temp[4][4];
@@ -670,8 +670,8 @@ bool Shape::collision_detection(Grid &grid_obj, int offset)
     }
 
     // Get the shape coordinates
-    int shape_cord_x = (this->get_shape_cord_x() - GRID_START_X + offset) / 40;
-    int shape_cord_y = (this->get_shape_cord_y()) / 40;
+    int shape_cord_x = (this->get_shape_cord_x() - GRID_START_X + offset_x) / 40;
+    int shape_cord_y = (this->get_shape_cord_y() + offset_y) / 40;
 
     // Check if the shape is colliding with the grid
    for(int i = 0; i < 4; ++i)

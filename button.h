@@ -30,7 +30,9 @@ class Button
 
 
     bool button_load_media(std::string path);
+    bool button_load_media_ttf_font();
     void button_render(int x, int y, SDL_Rect* clip = NULL);
+    void button_render_ttf_font(int x, int y, SDL_Rect* clip = NULL);
     int button_get_width();
     int button_get_height();
     void button_set_position(int x, int y);
@@ -51,6 +53,7 @@ class Button
 };
 
 bool init_button_media();
+bool init_button_ttf_font();
 void destroy_button();
 void start();
 

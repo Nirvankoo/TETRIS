@@ -273,6 +273,7 @@ void Grid::destroy_line(Score &obj)
                 {
                     obj.set_score(obj.get_score() + 1);
                     grid[k][l] = grid[k - 1][l];
+                     update_score();
                 }
 
             }

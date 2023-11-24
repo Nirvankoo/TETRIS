@@ -9,14 +9,12 @@
 #include "button_set.h"
 #include "shapes.h"
 #include "run.h"
+#include "score.h"
 
 const int BUTTON_WIDTH = 265;
 const int BUTTON_HEIGHT = 100;
 
 bool start_button = false;
-
-
-
 
 Button::Button()
 {
@@ -46,6 +44,7 @@ Button::~Button()
     button_position.y = 0;
     button_current_sprite = BUTTON_SPRITE_MOUSE_OUT;
     button_texture = NULL;
+
     button_name = "";
 }
 
@@ -70,6 +69,39 @@ bool Button::button_load_media(std::string path)
         SDL_FreeSurface(loaded_surface);
     }
     return success;
+}
+
+bool Button::button_load_media_ttf_font()
+{
+    bool success = true;
+    SDL_Surface *button_surface = TTF_RenderText_Solid(but_set_font, button_name.c_str(), button_color);
+    if (button_surface == NULL)
+    {
+        std::cout << "Failed to create button surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
+        success = false;
+    }
+    else
+    {
+        button_texture = SDL_CreateTextureFromSurface(renderer, button_surface);
+        if (button_texture == NULL)
+        {
+            std::cout << "Failed to create button texture! SDL_ttf Error: " << TTF_GetError() << std::endl;
+            success = false;
+        }
+        else
+        {
+            width = button_surface->w;
+            height = button_surface->h;
+        }
+        SDL_FreeSurface(button_surface);
+    }
+    return success;
+}
+
+void Button::button_render_ttf_font(int x, int y, SDL_Rect *clip)
+{
+    SDL_Rect button_set_rect = {x, y, width, height};
+    SDL_RenderCopy(renderer, button_texture, clip, &button_set_rect);
 }
 
 void Button::button_render(int x, int y, SDL_Rect *clip)
@@ -126,7 +158,7 @@ void Button::button_handle_event(SDL_Event *e)
         if (!inside)
         {
             button_current_sprite = BUTTON_SPRITE_MOUSE_OUT;
-             button_color = {0xFF, 0xFF, 0xFF};
+            button_color = {0xFF, 0xFF, 0xFF};
         }
         else
         {
@@ -136,14 +168,14 @@ void Button::button_handle_event(SDL_Event *e)
                 button_current_sprite = BUTTON_SPRITE_MOUSE_OVER_MOTION;
                 std::cout << "<MOUSE OVER " << button_name << ">"
                           << "x:" << x << "y:" << y << std::endl;
-                          button_color = {0xFF, 0xFF, 0x00};
+                button_color = {0xFF, 0xFF, 0x00};
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (button_name == "start")
                 {
                     // Handle action for the START button
                     button_current_sprite = BUTTON_SPRITE_MOUSE_DOWN;
-                    if(sound_effect)
+                    if (sound_effect)
                     {
                         Mix_PlayChannel(-1, button_click, 0);
                     }
@@ -151,26 +183,32 @@ void Button::button_handle_event(SDL_Event *e)
                     start_button = true;
                     next_shape_flag = true;
                     //*******************************************************************
-                    //reset position of the square that it appers at the top of the screen
-                    
-                    
-                    
+                    // reset position of the square that it appers at the top of the screen
+
                     return;
-                    
                 }
                 else if (button_name == "MUSIC : ON" || button_name == "MUSIC : OFF")
                 {
                     if (button_name == "MUSIC : ON")
                     {
+                         button_set_name("MUSIC : OFF");
                         // Handle action for the MUSIC button
+                        SDL_Surface *button_surface = TTF_RenderText_Solid(but_set_font, button_name.c_str(), button_color);
+                        button_texture = SDL_CreateTextureFromSurface(renderer, button_surface);
+                        SDL_FreeSurface(button_surface);
+                        
                         Mix_PlayChannel(-1, button_click, 0);
-                        button_set_name("MUSIC : OFF");
+                       
                         Mix_PauseMusic();
                     }
                     else if (button_name == "MUSIC : OFF")
                     {
-                        Mix_PlayChannel(-1, button_click, 0);
                         button_set_name("MUSIC : ON");
+                        SDL_Surface *button_surface = TTF_RenderText_Solid(but_set_font, button_name.c_str(), button_color);
+                        button_texture = SDL_CreateTextureFromSurface(renderer, button_surface);
+                        SDL_FreeSurface(button_surface);
+                        Mix_PlayChannel(-1, button_click, 0);
+                        
                         Mix_ResumeMusic();
                     }
                 }
@@ -178,16 +216,23 @@ void Button::button_handle_event(SDL_Event *e)
                 {
                     if (button_name == "SOUND : ON")
                     {
+                        button_set_name("SOUND : OFF");
+                        SDL_Surface *button_surface = TTF_RenderText_Solid(but_set_font, button_name.c_str(), button_color);
+                        button_texture = SDL_CreateTextureFromSurface(renderer, button_surface);
+                        SDL_FreeSurface(button_surface);
                         // Handle action for the SOUND button
                         Mix_PlayChannel(-1, button_click, 0);
-                        button_set_name("SOUND : OFF");
+                        
                         sound_effect = false;
-
                     }
                     else if (button_name == "SOUND : OFF")
                     {
+                         button_set_name("SOUND : ON");
+                        SDL_Surface *button_surface = TTF_RenderText_Solid(but_set_font, button_name.c_str(), button_color);
+                        button_texture = SDL_CreateTextureFromSurface(renderer, button_surface);
+                        SDL_FreeSurface(button_surface);
                         Mix_PlayChannel(-1, button_click, 0);
-                        button_set_name("SOUND : ON");
+                       
                         sound_effect = true;
                     }
                 }
@@ -206,8 +251,9 @@ void Button::button_set_name(std::string name)
 
 Button button_start("start", 265, 100);
 SDL_Rect button_sprite_clips[BUTTON_SPRITE_TOTAL];
-Button button_music_switch("MUSIC : ON", 120, 30);
-Button button_sound_switch("SOUND : ON", 130, 30);
+Button button_music_switch("MUSIC : ON", 10, 10);
+Button button_sound_switch("SOUND : ON", 10, 50);
+Score score_obj(800, 50, 800, 100);
 
 bool init_button()
 {
@@ -242,6 +288,9 @@ bool init_button_media()
     button_start.button_set_position(355, 345);
     button_music_switch.button_set_position(10, 10);
     button_sound_switch.button_set_position(10, 50);
+    button_music_switch.button_load_media_ttf_font();
+    button_sound_switch.button_load_media_ttf_font();
+    
 
     return succes;
 }
@@ -251,4 +300,18 @@ void destroy_button()
     button_start.~Button();
 }
 
-
+bool init_button_madia_ttf_font()
+{
+    bool success = true;
+    if (!button_music_switch.button_load_media_ttf_font())
+    {
+        std::cout << "Failed to load button media!" << std::endl;
+        success = false;
+    }
+    else if (!button_sound_switch.button_load_media_ttf_font())
+    {
+        std::cout << "Failed to load button media!" << std::endl;
+        success = false;
+    }
+    return success;
+}

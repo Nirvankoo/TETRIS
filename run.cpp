@@ -21,7 +21,7 @@ Grid grid_obj;
 bool run_flag = false;
 Shape *current_shape = nullptr;
 
-Score score_obj;
+
 
 
 //std::vector<Shape *> shapes_container;
@@ -35,6 +35,24 @@ void run()
     if (!init_button_media())
     {
         std::cout << "Failed to initialize!" << std::endl;
+        return;
+    }
+
+    if(!intit_button_ttf_font())
+    {
+        std::cout << "Failed to load button media!" << std::endl;
+        return;
+    }
+
+    if(!intit_button_ttf_font())
+    {
+        std::cout << "Failed to initialize button ttf font!" << std::endl;
+        return;
+    }
+
+    if(!init_score_media())
+    {
+        std::cout << "Failed to load score media!" << std::endl;
         return;
     }
 
@@ -91,11 +109,13 @@ void run()
         }
         // button settings !!!!!!!!!!!!!!!!!!!!
         
-            create_button_set(button_music_switch, 10, 10);
-            create_button_set(button_sound_switch, 10, 50);
+        button_music_switch.button_render_ttf_font(button_music_switch.button_get_position_x(), button_music_switch.button_get_position_y());
+        button_sound_switch.button_render_ttf_font(button_sound_switch.button_get_position_x(), button_sound_switch.button_get_position_y());
         
+        score_obj.render_score(score_obj.get_level_position_x(), score_obj.get_level_position_y());
         // score !!!!!!!!!!!!!!!!!!!!!!!
-        score_obj.show_score_on_screen(800, 50);
+    
+       
 
         // Render all shapes in the container
         // for (Shape *shape : shapes_container)
@@ -135,11 +155,12 @@ void run()
         {
             // std::cout << "Shape coordinates: (" << current_shape->get_shape_cord_x() << ", " << current_shape->get_shape_cord_y() << ")" << std::endl;
 
+            
             current_shape->render_shape(current_shape->get_shape_cord_x(), current_shape->get_shape_cord_y(), NULL);
 
             if (current_time - last_time > TIME_STEP)
             {
-                if (current_shape->inside_grid(0) && (!current_shape->collision_detection(grid_obj, 2)))
+                if (current_shape->inside_grid(0) && (!current_shape->collision_detection(grid_obj, 0, 5)))
                 {
                    
                     
@@ -149,7 +170,7 @@ void run()
                 }
                 else
                 {
-                    if(current_shape->collision_detection(grid_obj, 0))
+                    if(current_shape->collision_detection(grid_obj, 0, 0))
                     current_shape->set_shape_cord_y(current_shape->get_shape_cord_y() - 40);
                     else if(!current_shape->inside_grid(0))
                     current_shape->set_shape_cord_y(current_shape->get_shape_cord_y());
@@ -161,6 +182,8 @@ void run()
                     if(score_obj.get_score() >= 1000)
                     {
                         score_obj.set_level();
+                       
+
                     }
                     
                     if(grid_obj.lose_game())

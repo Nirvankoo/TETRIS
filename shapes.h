@@ -68,7 +68,7 @@ class Shape
     bool inside_grid(int offset);
     static Shape *create_shapes(const std::string &name);
     void rotate_shape();
-    bool collision_detection(Grid &grid_obj, int offset);
+    bool collision_detection(Grid &grid_obj, int offset_x, int offset_y);
 };
 
 class Square : public Shape
